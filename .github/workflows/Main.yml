@@ -2,7 +2,9 @@ name: "EC2_Terraform"
 
 on:
   workflow_dispatch:
-
+permissions:
+  id-token: write
+  contents: read
 jobs:
   Plan:
     uses: zetaaztra/EC2_Terraform/.github/workflows/aws_tf_plan.yml@main
