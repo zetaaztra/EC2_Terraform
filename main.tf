@@ -1,4 +1,16 @@
 # main.tf
+# The configuration for the `remote` backend.
+#     terraform {
+#       backend "remote" {
+#         # The name of your Terraform Cloud organization.
+#         organization = "Pravin613"
+#
+#         # The name of the Terraform Cloud workspace to store Terraform state files in.
+#         workspaces {
+#           name = "EC2_Terraform"
+#         }
+#       }
+#     }
 
 # Create a security group allowing all TCP and SSH traffic
 resource "aws_security_group" "allow_all_tcp_ssh" {
