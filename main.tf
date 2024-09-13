@@ -11,11 +11,6 @@ terraform {
   }
 }
 
-# Define the AWS provider
-provider "aws" {
-  region = "ap-southeast-1"
-}
-
 # Create a security group allowing all TCP and SSH traffic
 resource "aws_security_group" "allow_all_tcp_ssh" {
   name        = "allow_all_tcp_ssh"
