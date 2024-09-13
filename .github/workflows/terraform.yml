@@ -8,23 +8,24 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    environment: dev # Specify the dev environment
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Debug Environment Variables Step
+    - name: Debug Environment Variables
+      run: env
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
-      env:
-        # This pulls the TFC API token from the dev environment
-        TFC_API_TOKEN: ${{ secrets.dev.TERRAFORM_CLOUD_TOKEN }}
+        cli_config_credentials_token: ${{ secrets.dev.TERRAFORM_CLOUD_TOKEN }}
 
     - name: Terraform Init
       run: terraform init
       env:
-        # Use AWS credentials from the dev environment
         AWS_ACCESS_KEY_ID: ${{ secrets.dev.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.dev.AWS_SECRET_ACCESS_KEY }}
 
