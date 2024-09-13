@@ -1,4 +1,4 @@
-name: "AWS Terraform Plan"
+name: AWS Terraform Plan
 
 on:
   workflow_call:
@@ -34,10 +34,3 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-
-      - name: Save Terraform Plan to Terraform Cloud
-        run: terraform show -json tfplan | curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.cli_config_credentials_token }}" \
-          -H "Content-Type: application/vnd.api+json" \
-          -d @- \
-          https://app.terraform.io/api/v2/runs
