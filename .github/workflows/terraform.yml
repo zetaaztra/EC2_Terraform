@@ -1,4 +1,4 @@
-name: Terraform Plan & Apply
+name: Terraform AWS Deployment
 
 on:
   push:
@@ -13,14 +13,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Use the dev environment for Terraform Cloud API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+      env:
+        # This pulls the secret from the dev environment
+        TFC_API_TOKEN: ${{ secrets.TFC_API_TOKEN }} # If you have this set in the dev environment
 
     - name: Terraform Init
       run: terraform init
       env:
+        # Use AWS environment for credentials
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -31,7 +36,6 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
