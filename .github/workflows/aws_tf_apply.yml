@@ -1,0 +1,68 @@
+name: "AWS Terraform Apply"
+
+on:
+  workflow_call:
+    inputs:
+      tf_version:
+        description: 'Specifies version of Terraform to use. e.g: 1.1.0 Default=latest.'
+        required: false
+        type: string
+        default: latest
+      gh_environment:
+        description: 'Specifies the GitHub deployment environment.'
+        required: false
+        type: string
+        default: null
+    secrets:
+      cli_config_credentials_token:
+        description: 'cli config credentials token'
+        required: true
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.gh_environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.2
+        with:
+          terraform_version: ${{ inputs.tf_version }}
+          cli_config_credentials_token: ${{ secrets.cli_config_credentials_token }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::851725491301:role/github-oidc-role
+          role-session-name: samplerolesession
+          aws-region: ap-southeast-1
+
+      - name: Print AWS SSM Parameter
+        run: aws ssm get-parameter --name=hello_aws-gh-oidc --query Parameter.Value
+
+      - name: Print Assumed Role
+        run: aws sts get-caller-identity
