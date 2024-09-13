@@ -14,29 +14,28 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Debug Environment Variables Step
-    - name: Debug Environment Variables
-      run: env
-
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        cli_config_credentials_token: ${{ secrets.dev.TFC_API_TOKEN }}
+        terraform_version: 1.5.0 # Specify the version of Terraform you are using
 
     - name: Terraform Init
       run: terraform init
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.dev.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.dev.AWS_SECRET_ACCESS_KEY }}
+        TFC_API_TOKEN: ${{ secrets.dev.TFC_API_TOKEN }}
 
     - name: Terraform Plan
       run: terraform plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.dev.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.dev.AWS_SECRET_ACCESS_KEY }}
+        TFC_API_TOKEN: ${{ secrets.dev.TFC_API_TOKEN }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.dev.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.dev.AWS_SECRET_ACCESS_KEY }}
+        TFC_API_TOKEN: ${{ secrets.dev.TFC_API_TOKEN }}
