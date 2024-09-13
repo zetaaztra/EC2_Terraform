@@ -1,29 +1,22 @@
-name: Terraform Workflow
+name: "BreadcrumbsEC2_Terraform"
 
 on:
   workflow_dispatch:
-    inputs:
-      action:
-        description: 'Select the action to perform'
-        required: true
-        type: choice
-        options:
-          - Plan
-          - Apply
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  plan:
-    if: ${{ github.event.inputs.action == 'Plan' }}
-    uses: ./.github/workflows/aws_tf_plan.yml
+  Plan:
+    uses: zetaaztra/EC2_Terraform/.github/workflows/aws_tf_plan.yml@main
     with:
       gh_environment: dev
     secrets:
       cli_config_credentials_token: ${{ secrets.TFC_API_TOKEN }}
 
-  apply:
-    if: ${{ github.event.inputs.action == 'Apply' }}
-    needs: plan
-    uses: ./.github/workflows/aws_tf_apply.yml
+  Apply:
+    needs: Plan
+    uses: zetaaztra/EC2_Terraform/.github/workflows/aws_tf_apply.yml@main
     with:
       gh_environment: dev
     secrets:
