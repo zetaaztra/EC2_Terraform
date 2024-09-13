@@ -1,4 +1,4 @@
-name: "BreadcrumbsEC2_Terraform"
+name: "EC2_Terraform"
 
 on:
   workflow_dispatch:
