@@ -1,21 +1,29 @@
-name: "EC2_Terraform"
+name: Terraform Workflow
 
 on:
   workflow_dispatch:
-permissions:
-  id-token: write
-  contents: read
+    inputs:
+      action:
+        description: 'Select the action to perform'
+        required: true
+        type: choice
+        options:
+          - Plan
+          - Apply
+
 jobs:
-  Plan:
-    uses: zetaaztra/EC2_Terraform/.github/workflows/aws_tf_plan.yml@main
+  plan:
+    if: ${{ github.event.inputs.action == 'Plan' }}
+    uses: ./.github/workflows/aws_tf_plan.yml
     with:
       gh_environment: dev
     secrets:
       cli_config_credentials_token: ${{ secrets.TFC_API_TOKEN }}
 
-  Apply:
-    needs: Plan
-    uses: zetaaztra/EC2_Terraform/.github/workflows/aws_tf_apply.yml@main
+  apply:
+    if: ${{ github.event.inputs.action == 'Apply' }}
+    needs: plan
+    uses: ./.github/workflows/aws_tf_apply.yml
     with:
       gh_environment: dev
     secrets:
